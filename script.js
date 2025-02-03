@@ -2,7 +2,7 @@ const dropdownMenu = document.querySelector("#dropdown-menu");
 const dropdownToggler = document.querySelector("#dropdown-toggler");
 const output = document.querySelector("#output-div");
 const btnOutput = document.querySelector("#output-btn");
-const apiKey = "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";
+const apiKey = "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";
 let repo = null;
 
 btnOutput.addEventListener("click",()=>{
@@ -22,6 +22,22 @@ function showData() {
   `;
 }
 
+function errorBtn(){
+  btnOutput.classList.remove("btn-dark")
+  btnOutput.classList.remove("hide")
+  btnOutput.classList.add("btn-danger")
+  btnOutput.textContent = "Retry"
+  output.classList.add("bg-danger-subtle")
+}
+
+function refreshBtn(){
+  btnOutput.classList.remove("hide");
+  btnOutput.classList.remove("btn-danger")
+  btnOutput.classList.add("btn-dark")
+  btnOutput.textContent = "Refresh";
+  output.classList.remove("bg-danger-subtle")
+}
+
 function fetchData(query) {
   output.innerHTML = `<p id="output-p" class="p-4">Loading, please wait...</p>`;
   fetch(`https://api.github.com/search/repositories?q=${encodeURIComponent(query)}`, {
@@ -36,10 +52,10 @@ function fetchData(query) {
         console.log(randNumber);
         repo = data.items[randNumber]; // Select a random repo from the results
         showData();
-        btnOutput.classList.remove("hide");
-        btnOutput.textContent = "Refresh";
+        refreshBtn();
       } else {
         output.innerHTML = "<p>No results found</p>";
+        errorBtn()
       }
     })
     .catch((error) => {
