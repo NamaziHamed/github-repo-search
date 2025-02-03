@@ -36,6 +36,7 @@ window.onload = fetch(
         e.preventDefault();
         dropdownToggler.textContent = e.target.textContent;
         const query = e.target.getAttribute("data-value");
+        output.innerHTML = `<p id="output-p" class="p-4">Loading, please wait...</p>`
         fetch(
           `https://api.github.com/search/repositories?q=${encodeURIComponent(
             query
@@ -49,8 +50,12 @@ window.onload = fetch(
           .then((response) => response.json())
           .then((data) => {
             if (data.items && data.items.length > 0) {
-              repo = data.items[0]; // Assuming you want to display the first repo from the results
+            const randNumber = Math.round(Math.random()*data.items.length)
+            console.log(randNumber)
+              repo = data.items[randNumber]; // Assuming you want to display the first repo from the results
               showData();
+              btnOutput.classList.remove("hide")
+              btnOutput.textContent = "Refresh"
             } else {
               output.innerHTML = "<p>No results found</p>";
             }
