@@ -5,67 +5,64 @@ const btnOutput = document.querySelector("#output-btn");
 const apiKey = "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";
 let repo = null;
 
-
-
 function showData() {
-    output.innerHTML = `
-  <h4>${repo.name}</h4>
-  <p>${repo.description}</p>
-  <div class="row justify-content-between">
+  output.innerHTML = `
+    <h4>${repo.name}</h4>
+    <p>${repo.description}</p>
+    <div class="row justify-content-between">
       <p class="col-3">${repo.name}</p>
-      <p class="col-3"> ${repo.stargazers_count}</p>
+      <p class="col-3">${repo.stargazers_count}</p>
       <p class="col-3">${repo.open_issues_count}</p>
-  </div>
+    </div>
   `;
-  }
+}
 
-window.onload = fetch(
-  "https://raw.githubusercontent.com/kamranahmedse/githunt/master/src/components/filters/language-filter/languages.json"
-)
-  .then((response) => response.json())
-  .then((data) => {
-    for ({ title, value } of data) {
-      dropdownMenu.innerHTML += `
-          <li ><a class="dropdown-item" href="#" data-value="${value}">${title}</a></li>
- `;
+function fetchData(query) {
+  output.innerHTML = `<p id="output-p" class="p-4">Loading, please wait...</p>`;
+  fetch(`https://api.github.com/search/repositories?q=${encodeURIComponent(query)}`, {
+    headers: {
+      Authorization: `token ${apiKey}`,
     }
-
-    const allOptions = document.querySelectorAll(".dropdown-item");
-    allOptions.forEach((item) => {
-      item.addEventListener("click", (e) => {
-        e.preventDefault();
-        dropdownToggler.textContent = e.target.textContent;
-        const query = e.target.getAttribute("data-value");
-        output.innerHTML = `<p id="output-p" class="p-4">Loading, please wait...</p>`
-        fetch(
-          `https://api.github.com/search/repositories?q=${encodeURIComponent(
-            query
-          )}`,
-          {
-            headers: {
-              Authorization: `token ${apiKey}`,
-            },
-          }
-        )
-          .then((response) => response.json())
-          .then((data) => {
-            if (data.items && data.items.length > 0) {
-            const randNumber = Math.round(Math.random()*data.items.length)
-            console.log(randNumber)
-              repo = data.items[randNumber]; // Assuming you want to display the first repo from the results
-              showData();
-              btnOutput.classList.remove("hide")
-              btnOutput.textContent = "Refresh"
-            } else {
-              output.innerHTML = "<p>No results found</p>";
-            }
-          })
-          .catch((error) => {
-            console.error("Error fetching data:", error);
-          });
-      });
-    });
   })
-  .catch((error) => {
-    console.error("Error fetching JSON:", error);
-  });
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.items && data.items.length > 0) {
+        const randNumber = Math.round(Math.random() * data.items.length);
+        console.log(randNumber);
+        repo = data.items[randNumber]; // Select a random repo from the results
+        showData();
+        btnOutput.classList.remove("hide");
+        btnOutput.textContent = "Refresh";
+      } else {
+        output.innerHTML = "<p>No results found</p>";
+      }
+    })
+    .catch((error) => {
+      console.error("Error fetching data:", error);
+      output.innerHTML = `<p>Error: ${error.message}</p>`;
+    });
+}
+
+window.onload = () => {
+  fetch("https://raw.githubusercontent.com/kamranahmedse/githunt/master/src/components/filters/language-filter/languages.json")
+    .then((response) => response.json())
+    .then((data) => {
+      data.forEach(({ title, value }) => {
+        dropdownMenu.innerHTML += `
+          <li><a class="dropdown-item" href="#" data-value="${value}">${title}</a></li>
+        `;
+      });
+      const allOptions = document.querySelectorAll(".dropdown-item");
+      allOptions.forEach((item) => {
+        item.addEventListener("click", (e) => {
+          e.preventDefault();
+          dropdownToggler.textContent = e.target.textContent;
+          const query = e.target.getAttribute("data-value");
+          fetchData(query); // Call the fetchData function
+        });
+      });
+    })
+    .catch((error) => {
+      console.error("Error fetching JSON:", error);
+    });
+};
