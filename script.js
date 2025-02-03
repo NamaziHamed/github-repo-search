@@ -5,14 +5,19 @@ const btnOutput = document.querySelector("#output-btn");
 const apiKey = "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";
 let repo = null;
 
+btnOutput.addEventListener("click",()=>{
+    const query = dropdownToggler.textContent
+    fetchData(query)
+})
+
 function showData() {
   output.innerHTML = `
     <h4>${repo.name}</h4>
     <p>${repo.description}</p>
     <div class="row justify-content-between">
-      <p class="col-3">${repo.name}</p>
-      <p class="col-3">${repo.stargazers_count}</p>
-      <p class="col-3">${repo.open_issues_count}</p>
+      <p class="col-3"><i class="fa-solid fa-circle" style="color: #FFD43B;"></i> ${repo.language}</p>
+      <p class="col-3"><i class="fa-solid fa-star" style="color: #676a6f;"></i> ${repo.stargazers_count}</p>
+      <p class="col-3"><i class="fa-solid fa-code-fork"></i> ${repo.open_issues_count}</p>
     </div>
   `;
 }
