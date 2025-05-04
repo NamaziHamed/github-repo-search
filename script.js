@@ -2,17 +2,19 @@ const dropdownMenu = document.querySelector("#dropdown-menu");
 const dropdownToggler = document.querySelector("#dropdown-toggler");
 const output = document.querySelector("#output-div");
 const btnOutput = document.querySelector("#output-btn");
-const apiKey = "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";
+const apiKey = "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";
 let repo = null;
 
-btnOutput.addEventListener("click",()=>{
-    const query = dropdownToggler.textContent
-    fetchData(query)
-})
+btnOutput.addEventListener("click", () => {
+  const query = dropdownToggler.textContent;
+  fetchData(query);
+});
 
 function showData() {
   output.innerHTML = `
-    <h4>${repo.name}</h4>
+    <a href=${repo.html_url} target="_blank" rel="noopener noreferrer">
+      <h4>${repo.name}</h4>
+    </a>
     <p>${repo.description}</p>
     <div class="row justify-content-between">
       <p class="col-3"><i class="fa-solid fa-circle" style="color: #FFD43B;"></i> ${repo.language}</p>
@@ -22,29 +24,32 @@ function showData() {
   `;
 }
 
-function errorBtn(){
-  btnOutput.classList.remove("btn-dark")
-  btnOutput.classList.remove("hide")
-  btnOutput.classList.add("btn-danger")
-  btnOutput.textContent = "Retry"
-  output.classList.add("bg-danger-subtle")
+function errorBtn() {
+  btnOutput.classList.remove("btn-dark");
+  btnOutput.classList.remove("hide");
+  btnOutput.classList.add("btn-danger");
+  btnOutput.textContent = "Retry";
+  output.classList.add("bg-danger-subtle");
 }
 
-function refreshBtn(){
+function refreshBtn() {
   btnOutput.classList.remove("hide");
-  btnOutput.classList.remove("btn-danger")
-  btnOutput.classList.add("btn-dark")
+  btnOutput.classList.remove("btn-danger");
+  btnOutput.classList.add("btn-dark");
   btnOutput.textContent = "Refresh";
-  output.classList.remove("bg-danger-subtle")
+  output.classList.remove("bg-danger-subtle");
 }
 
 function fetchData(query) {
   output.innerHTML = `<p id="output-p" class="p-4">Loading, please wait...</p>`;
-  fetch(`https://api.github.com/search/repositories?q=${encodeURIComponent(query)}`, {
-    headers: {
-      Authorization: `token ${apiKey}`,
+  fetch(
+    `https://api.github.com/search/repositories?q=${encodeURIComponent(query)}`,
+    {
+      headers: {
+        Authorization: `token ${apiKey}`,
+      },
     }
-  })
+  )
     .then((response) => response.json())
     .then((data) => {
       if (data.items && data.items.length > 0) {
@@ -55,7 +60,7 @@ function fetchData(query) {
         refreshBtn();
       } else {
         output.innerHTML = "<p>No results found</p>";
-        errorBtn()
+        errorBtn();
       }
     })
     .catch((error) => {
@@ -65,7 +70,9 @@ function fetchData(query) {
 }
 
 window.onload = () => {
-  fetch("https://raw.githubusercontent.com/kamranahmedse/githunt/master/src/components/filters/language-filter/languages.json")
+  fetch(
+    "https://raw.githubusercontent.com/kamranahmedse/githunt/master/src/components/filters/language-filter/languages.json"
+  )
     .then((response) => response.json())
     .then((data) => {
       data.forEach(({ title, value }) => {
