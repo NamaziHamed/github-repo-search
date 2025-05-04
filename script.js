@@ -47,6 +47,7 @@ function fetchData(query) {
     {
       headers: {
         Authorization: `token ${apiKey}`,
+        Accept: "application/vnd.github.v3+json",
       },
     }
   )
